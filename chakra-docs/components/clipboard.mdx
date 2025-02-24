@@ -1,0 +1,81 @@
+---
+title: Clipboard
+description: Used to copy text to the clipboard
+links:
+  source: components/clipboard
+  storybook: components-clipboard--basic
+  recipe: clipboard
+  ark: https://ark-ui.com/react/docs/components/clipboard
+---
+
+<ExampleTabs name="clipboard-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`clipboard` snippet
+
+```sh
+npx @chakra-ui/cli snippet add clipboard
+```
+
+The snippet includes a closed component composition for the `Clipboard`
+component.
+
+## Usage
+
+```jsx
+import {
+  ClipboardButton,
+  ClipboardIconButton,
+  ClipboardInput,
+} from "@/components/ui/clipboard"
+```
+
+```jsx
+<ClipboardRoot value="...">
+  <ClipboardButton />
+  <ClipboardIconButton />
+  <ClipboardInput />
+</ClipboardRoot>
+```
+
+## Examples
+
+### Copy Button
+
+Use the `Clipboard.Context` and `Clipboard.Trigger` components to create a copy
+button.
+
+<ExampleTabs name="clipboard-with-button" />
+
+### Input
+
+Use the `Clipboard.Input` component to create a copy input.
+
+<ExampleTabs name="clipboard-with-input" />
+
+### Timeout
+
+Use the `timeout` prop to change the duration of the copy message.
+
+<ExampleTabs name="clipboard-with-timeout" />
+
+### Link Appearance
+
+Use the `ClipboardText` component to create a link appearance.
+
+<ExampleTabs name="clipboard-with-link" />
+
+### Without Snippet
+
+If you don't want to use the snippet, you can use the `Clipboard` component from
+the `@chakra-ui/react` package.
+
+<ExampleTabs name="clipboard-without-snippet" />
+
+## Props
+
+### Root
+
+<PropTable component="Clipboard" part="Root" />

@@ -1,0 +1,74 @@
+---
+title: DataList
+description: Used to display a list of similar data items.
+links:
+  source: components/data-list
+  storybook: components-data-list--basic
+  recipe: data-list
+---
+
+<ExampleTabs name="data-list-basic" />
+
+## Usage
+
+```tsx
+import { DataList } from "@chakra-ui/react"
+```
+
+```tsx
+<DataList.Root>
+  {data.map((item) => (
+    <DataList.Item key={item.label}>
+      <DataList.ItemLabel>{item.label}</DataList.ItemLabel>
+      <DataList.ItemValue>{item.value}</DataList.ItemValue>
+    </DataList.Item>
+  ))}
+</DataList.Root>
+```
+
+## Examples
+
+### Sizes
+
+Use the `size` prop to change the size of the datalist component.
+
+<ExampleTabs name="data-list-with-sizes" />
+
+### Variants
+
+Use the `variant` prop to change the variant of the datalist component.
+
+> Added in `v3.1.x`
+
+<ExampleTabs name="data-list-with-variants" />
+
+### Orientation
+
+Use the `orientation` prop to change the orientation of the datalist component.
+
+<ExampleTabs name="data-list-vertical" />
+
+### Info Tip
+
+Render the `InfoTip` component within `DataList.Item` to provide additional
+context to the datalist.
+
+<ExampleTabs name="data-list-with-info" />
+
+### Separator
+
+Use the `divideY` prop on the `DataList.Root` to add a separator between items.
+
+<ExampleTabs name="data-list-with-separator" />
+
+### Closed Component
+
+Here's how to setup the Data List for a closed component composition.
+
+<ExampleCode name="data-list-closed-component" />
+
+## Props
+
+### Root
+
+<PropTable component="DataList" part="Root" />

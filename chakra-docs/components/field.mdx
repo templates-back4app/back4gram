@@ -1,0 +1,93 @@
+---
+title: Field
+description: Used to add labels, help text, and error messages to form fields.
+links:
+  source: components/field
+  storybook: components-field--basic
+  recipe: field
+  ark: https://ark-ui.com/react/docs/components/field
+---
+
+<ExampleTabs name="field-basic" />
+
+## Usage
+
+```tsx
+import { Field } from "@chakra-ui/react"
+```
+
+```tsx
+<Field.Root>
+  <Field.Label>
+    <Field.RequiredIndicator />
+  </Field.Label>
+  <Input />
+  <Field.HelperText />
+  <Field.ErrorText />
+</Field.Root>
+```
+
+## Examples
+
+### Error Text
+
+Pass the `invalid` prop to `Field.Root` and use the `Field.ErrorText` to
+indicate that the field is invalid.
+
+<ExampleTabs name="field-with-error-text" />
+
+### Helper Text
+
+Use the `Field.HelperText` to add helper text to the field.
+
+<ExampleTabs name="field-with-helper-text" />
+
+### Horizontal
+
+Use the `orientation="horizontal"` prop to align the label and input
+horizontally.
+
+<ExampleTabs name="field-horizontal" />
+
+### Disabled
+
+Use the `disabled` prop to disable the field.
+
+<ExampleTabs name="field-with-disabled" />
+
+### Textarea
+
+Here's how to use the field component with a textarea.
+
+<ExampleTabs name="field-with-textarea" />
+
+### Native Select
+
+Here's how to use the field component with a native select.
+
+<ExampleTabs name="field-with-native-select" />
+
+### Required
+
+Pass the `required` prop to `Field.Root` and use the `Field.RequiredIndicator`
+to indicate that the field is required.
+
+<ExampleTabs name="field-with-required" />
+
+### Optional
+
+Pass the `fallback` prop to the `Field.RequiredIndicator` to add optional text.
+
+<ExampleTabs name="field-with-optional" />
+
+### Closed Component
+
+Here's how to setup the Field for a closed component composition.
+
+<ExampleCode name="field-closed-component" />
+
+## Props
+
+### Root
+
+<PropTable component="Field" part="Root" />

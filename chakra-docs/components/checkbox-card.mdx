@@ -1,0 +1,84 @@
+---
+title: Checkbox Card
+description: Used to select or deselect options displayed within cards.
+links:
+  source: components/checkbox-card
+  storybook: components-checkbox-card--basic
+  recipe: checkbox-card
+  ark: https://ark-ui.com/react/docs/components/checkbox
+---
+
+<ExampleTabs name="checkbox-card-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`checkbox-card` snippet
+
+```sh
+npx @chakra-ui/cli snippet add checkbox-card
+```
+
+The snippet includes a closed component composition for the `CheckboxCard`
+component.
+
+## Usage
+
+```jsx
+import { CheckboxCard } from "@/components/ui/checkbox-card"
+```
+
+```jsx
+<CheckboxCard label="Checkbox Card" />
+```
+
+## Examples
+
+### Group
+
+Use the `CheckboxCardGroup` component to group multiple checkbox cards.
+
+<ExampleTabs name="checkbox-card-with-group" />
+
+### Sizes
+
+Use the `size` prop to change the size of the checkbox card.
+
+<ExampleTabs name="checkbox-card-with-sizes" />
+
+### Variants
+
+Use the `variant` prop to change the variant of the checkbox card.
+
+<ExampleTabs name="checkbox-card-with-variants" />
+
+### Disabled
+
+Use the `disabled` prop to make the checkbox card disabled.
+
+<ExampleTabs name="checkbox-card-disabled" />
+
+### Addon
+
+Use the `CheckboxCardAddon` to add some more context to the checkbox card.
+
+<ExampleTabs name="checkbox-card-with-addon" />
+
+### Icon
+
+Render custom icons within the checkbox card.
+
+<ExampleTabs name="checkbox-card-with-icon" />
+
+### Without Snippet
+
+If you don't want to use the snippet, you can use the `CheckboxCard` component
+from the `@chakra-ui/react` package.
+
+<ExampleTabs name="checkbox-card-without-snippet" />
+
+## Props
+
+### Root
+
+<PropTable component="CheckboxCard" part="Root" />

@@ -1,0 +1,134 @@
+---
+title: Checkbox
+description:
+  Used in forms when a user needs to select multiple values from several options
+links:
+  source: components/checkbox
+  storybook: components-checkbox--basic
+  recipe: checkbox
+  ark: https://ark-ui.com/react/docs/components/checkbox
+---
+
+<ExampleTabs name="checkbox-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`checkbox` snippet
+
+```sh
+npx @chakra-ui/cli snippet add checkbox
+```
+
+The snippet includes a closed component composition for the `Checkbox`
+
+## Usage
+
+```jsx
+import { Checkbox } from "@/components/ui/checkbox"
+```
+
+```jsx
+<Checkbox>Click me</Checkbox>
+```
+
+## Examples
+
+### Variants
+
+Use the `variant` prop to change the visual style of the checkbox.
+
+<ExampleTabs name="checkbox-with-variants" />
+
+### Colors
+
+Use the `colorPalette` prop to change the color of the checkbox.
+
+<ExampleTabs name="checkbox-with-colors" />
+
+### Sizes
+
+Use the `size` prop to change the size of the checkbox.
+
+<ExampleTabs name="checkbox-with-sizes" />
+
+### States
+
+Use the `disabled` or `invalid` prop to change the visual state of the checkbox.
+
+<ExampleTabs name="checkbox-with-states" />
+
+### Controlled
+
+Use the `checked` and `onCheckedChange` props to control the state of the
+checkbox.
+
+<ExampleTabs name="checkbox-controlled" />
+
+### Store
+
+An alternative way to control the checkbox is to use the `RootProvider`
+component and the `useCheckbox` store hook.
+
+This way you can access the checkbox state and methods from outside the
+checkbox.
+
+<ExampleTabs name="checkbox-with-store" />
+
+### Hook Form
+
+Here's an example of how to use the `Checkbox` component with the
+`react-hook-form` library.
+
+<ExampleTabs name="checkbox-with-hook-form" />
+
+### Group
+
+Use the `CheckboxGroup` component to group multiple checkboxes together.
+
+<ExampleTabs name="checkbox-with-group" />
+
+### Group Hook Form
+
+Here's an example of how to use the `CheckboxGroup` component with the
+`react-hook-form` library.
+
+<ExampleTabs name="checkbox-with-group-hook-form" />
+
+### Custom Icon
+
+Use the `icon` prop to change the icon of the checkbox.
+
+<ExampleTabs name="checkbox-with-custom-icon" />
+
+### Indeterminate
+
+Set the `checked` prop to `indeterminate` to show the checkbox in an
+indeterminate state.
+
+<ExampleTabs name="checkbox-indeterminate" />
+
+### Description
+
+Add content to the children of the `Checkbox` component to add a description.
+
+<ExampleTabs name="checkbox-with-description" />
+
+### Link
+
+Render an anchor tag as the checkbox label.
+
+<ExampleTabs name="checkbox-with-link" />
+
+### Without Snippet
+
+If you don't want to use the snippet, you can use the `Checkbox` component from
+the `@chakra-ui/react` package.
+
+<ExampleTabs name="checkbox-without-snippet" />
+
+## Props
+
+### Root
+
+<PropTable component="Checkbox" part="Root" />

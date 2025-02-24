@@ -1,0 +1,152 @@
+---
+title: Select
+description: Used to pick a value from predefined options.
+links:
+  source: components/select
+  storybook: components-select--basic
+  recipe: select
+  ark: https://ark-ui.com/react/docs/components/select
+---
+
+<ExampleTabs name="select-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`select` snippet
+
+```sh
+npx @chakra-ui/cli snippet add select
+```
+
+The snippet includes a closed component composition for the `Select` component.
+
+## Usage
+
+```jsx
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from "@/components/ui/select"
+```
+
+```jsx
+<SelectRoot>
+  <SelectLabel />
+  <SelectTrigger>
+    <SelectValueText />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem />
+  </SelectContent>
+</SelectRoot>
+```
+
+## Examples
+
+### Sizes
+
+Use the `size` prop to change the size of the select component.
+
+<ExampleTabs name="select-with-sizes" />
+
+### Variants
+
+Use the `variant` prop to change the appearance of the select component.
+
+<ExampleTabs name="select-with-variants" />
+
+### Option Group
+
+Use the `SelectItemGroup` component to group select options.
+
+<ExampleTabs name="select-with-option-group" />
+
+### Controlled
+
+Use the `value` and `onValueChange` props to control the select component.
+
+<ExampleTabs name="select-controlled" />
+
+### Async Loading
+
+Here's an example of how to populate the select `collection` from a remote
+source.
+
+<ExampleTabs name="select-async-loading" />
+
+### Hook Form
+
+Here's an example of how to use the `Select` component with `react-hook-form`.
+
+<ExampleTabs name="select-with-hook-form" />
+
+### Disabled
+
+Use the `disabled` prop to disable the select component.
+
+<ExampleTabs name="select-with-disabled" />
+
+### Invalid
+
+Here's an example of how to compose the `Select` component with the `Field`
+component to display an error state.
+
+<ExampleTabs name="select-with-invalid" />
+
+### Multiple
+
+Use the `multiple` prop to allow multiple selections.
+
+<ExampleTabs name="select-with-multiple" />
+
+### Positioning
+
+Use the `positioning` prop to control the underlying `floating-ui` options of
+the select component.
+
+<ExampleTabs name="select-with-positioning" />
+
+### Within Popover
+
+Here's an example of how to use the `Select` within a `Popover` component.
+
+<ExampleTabs name="select-in-popover" />
+
+### Within Dialog
+
+Here's an example of how to use the `Select` within a `Dialog` component.
+
+> Due to the focus trap within the dialog, it's important to change the portal
+> target from the document's body to the dialog's content.
+
+<ExampleTabs name="select-in-dialog" />
+
+### Avatar Select
+
+Here's an example of how to compose the `Select` and the `Avatar`.
+
+<ExampleTabs name="select-with-avatar" />
+
+### Clear Trigger
+
+Pass the `clearable` prop to the `SelectTrigger`.
+
+<ExampleTabs name="select-with-clear" />
+
+### Overflow
+
+When the options are too many, the options will overflow the container due to
+the `maxHeight` set.
+
+<ExampleTabs name="select-with-overflow" />
+
+## Props
+
+### Root
+
+<PropTable component="Select" part="Root" />

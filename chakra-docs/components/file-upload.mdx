@@ -1,0 +1,116 @@
+---
+title: File Upload
+description: Used to select and upload files from their device.
+links:
+  source: components/file-upload
+  storybook: components-file-upload--basic
+  recipe: file-upload
+  ark: https://ark-ui.com/react/docs/components/file-upload
+---
+
+<ExampleTabs name="file-upload-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`file-upload` snippet
+
+```sh
+npx @chakra-ui/cli snippet add file-upload
+```
+
+The snippet includes a closed component composition for the `FileUpload`
+component.
+
+## Usage
+
+```jsx
+import {
+  FileUploadList,
+  FileUploadRoot,
+  FileUploadTrigger,
+} from "@/components/ui/file-upload"
+```
+
+```jsx
+<FileUploadRoot>
+  <FileUploadTrigger>
+    <Button>
+      <HiUpload /> Upload file
+    </Button>
+  </FileUploadTrigger>
+  <FileUploadList />
+</FileUploadRoot>
+```
+
+## Examples
+
+### Directory
+
+Use the `directory` prop to allow selecting a directory instead of a file.
+
+<ExampleTabs name="file-upload-directory" />
+
+### Media Capture
+
+Use the `capture` prop to select and upload files from different environments
+and media types.
+
+> **Note:** This is
+> [not fully supported](https://caniuse.com/mdn-api_htmlinputelement_capture) in
+> all browsers.
+
+<ExampleTabs name="file-upload-media-capture" />
+
+### Multiple Files
+
+Upload multiple files at once by using the `maxFiles` prop.
+
+<ExampleTabs name="file-upload-multiple" />
+
+### Dropzone
+
+Drop multiple files inside the dropzone and use the `maxFiles` prop to set the
+number of files that can be uploaded at once.
+
+<ExampleTabs name="file-upload-with-dropzone" />
+
+### Input
+
+Use the `FileInput` component to create a trigger that looks like a text input.
+
+<ExampleTabs name="file-upload-with-input" />
+
+### Clearable
+
+Here's an example of a clearable file upload input.
+
+<ExampleTabs name="file-upload-with-input-clear" />
+
+### Accepted Files
+
+Define the accepted files for upload using the `accept` prop.
+
+<ExampleTabs name="file-upload-accepted-files" />
+
+### Pasting Files
+
+Here's an example of handling files pasted from the clipboard.
+
+<ExampleTabs name="file-upload-with-paste-event" />
+
+### Store
+
+An alternative way to control the file upload is to use the `RootProvider`
+component and the `useFileUpload` store hook.
+
+This way you can access the file upload state and methods from outside the file
+upload.
+
+<ExampleTabs name="file-upload-with-store" />
+
+## Props
+
+### Root
+
+<PropTable component="FileUpload" part="Root" />

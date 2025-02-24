@@ -1,0 +1,74 @@
+---
+title: Timeline
+description: Used to display a list of events in chronological order
+links:
+  source: components/timeline
+  storybook: components-timeline--basic
+  recipe: timeline
+---
+
+<ExampleTabs name="timeline-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`timeline` snippet
+
+```sh
+npx @chakra-ui/cli snippet add timeline
+```
+
+The snippet includes a closed component composition for the `Timeline`
+component.
+
+## Usage
+
+```jsx
+import { TimelineItem, TimelineRoot } from "@/components/ui/timeline"
+```
+
+```jsx
+<TimelineRoot>
+  <TimelineItem />
+  <TimelineItem />
+</TimelineRoot>
+```
+
+## Examples
+
+### Sizes
+
+Use the `size` prop to change the size of the timeline.
+
+<ExampleTabs name="timeline-with-sizes" />
+
+### Variants
+
+Use the `variant` prop to change the variant of the timeline.
+
+<ExampleTabs name="timeline-with-variants" />
+
+### Content Before
+
+Here's an example of a timeline with content before the timeline indicator.
+
+<ExampleTabs name="timeline-with-content-before" />
+
+### Alternating Content
+
+Here's an example of a timeline with alternating content.
+
+<ExampleTabs name="timeline-alternating" />
+
+### Composition
+
+Here's an example of how to compose the timeline with other components to create
+a consistent-looking timeline.
+
+<ExampleTabs name="timeline-composition" />
+
+## Props
+
+### Root
+
+<PropTable component="Timeline" part="Root" />

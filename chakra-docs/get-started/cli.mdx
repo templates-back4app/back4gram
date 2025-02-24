@@ -1,0 +1,110 @@
+---
+title: "CLI"
+description:
+  Learn more to use the Chakra CLI command to generate snippets and typings
+---
+
+The Chakra UI CLI can be used to generate typings for your custom theme tokens,
+like colors, semantic tokens, recipe variants, etc.
+
+## Installation
+
+In order to use the CLI, you need to install it as a dev dependency in your
+project:
+
+:::code-group
+
+```bash [npm]
+npm i -D @chakra-ui/cli
+```
+
+```bash [pnpm]
+pnpm add -D @chakra-ui/cli
+```
+
+```bash [bun]
+bun add -d @chakra-ui/cli
+```
+
+:::
+
+:::warning
+
+To use the CLI tool, please ensure that the version of Node.js is `>= 20.6.0`.
+
+:::
+
+## Usage
+
+Use the Chakra CLI to run any of the commands listed below with your preferred
+package manager.
+
+```bash
+Usage: chakra-ui [options] [command]
+
+The official CLI for Chakra UI projects
+
+Options:
+  -V, --version               output the version number
+  -h, --help                  display help for command
+
+Commands:
+  typegen [options] <source>  Generate theme and recipe typings
+  snippet                     Add snippets to your project for better DX
+  eject [options]             Take control over the default theme tokens and recipes
+  help [command]              display help for command
+```
+
+## `chakra typegen`
+
+Generates theme and recipe typings for your custom theme. This helps to provide
+autocompletion and type safety in your project.
+
+```bash
+# Generate typings
+chakra typegen src/theme.ts
+
+# Watch for changes and rebuild
+chakra typegen src/theme.ts --watch
+
+# Generate strict types for props variant and size
+chakra typegen src/theme.ts --strict
+```
+
+## `chakra snippet`
+
+Generates useful component compositions that boost your development speed.
+
+```bash
+# Add all snippets
+chakra snippet add --all
+
+# Add a specific snippet
+chakra snippet add button
+
+# List all available snippets
+chakra snippet list
+
+# Specify a custom directory
+chakra snippet add dialog --outdir ./components/custom
+```
+
+## `chakra eject`
+
+Generated the file(s) that contain the default theme tokens and recipes so you
+can have full control over them.
+
+```bash
+# Copy the tokens and recipes to your project
+chakra eject --outdir src/theme
+```
+
+## FAQ
+
+### Autocomplete for custom tokens not working?
+
+After generating the typings, you need to "Restart TS Server" for the
+autocomplete to show up.
+
+Alternatively, you can install the `@chakra-ui/cli` package locally as a dev
+dependency and run the `chakra typegen` command to generate the typings.

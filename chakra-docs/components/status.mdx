@@ -1,0 +1,46 @@
+---
+title: Status
+description: Used to indicate the status of a process or state
+links:
+  source: components/status
+  storybook: components-status--basic
+  recipe: status
+---
+
+<ExampleTabs name="status-basic" />
+
+## Usage
+
+```tsx
+import { Status } from "@chakra-ui/react"
+```
+
+```tsx
+<Status.Root>
+  <Status.Indicator />
+</Status.Root>
+```
+
+## Examples
+
+### Label
+
+Render the label within the `Status.Root` component.
+
+<ExampleTabs name="status-with-label" />
+
+### Sizes
+
+Use the `size` prop to change the size of the status component.
+
+<ExampleTabs name="status-with-sizes" />
+
+### Closed Component
+
+Here's how to setup the Status for a closed component composition.
+
+<ExampleCode name="status-closed-component" />
+
+## Props
+
+<PropTable component="Status" part="Root" />

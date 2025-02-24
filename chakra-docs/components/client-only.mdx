@@ -1,0 +1,24 @@
+---
+title: Client Only
+description: Used to render content only on the client side.
+links:
+  source: components/client-only
+---
+
+## Usage
+
+```jsx
+import { ClientOnly, Skeleton } from "@chakra-ui/react"
+```
+
+```jsx
+<ClientOnly fallback={<Skeleton />}>
+  <ColorModeButton />
+</ClientOnly>
+```
+
+## Props
+
+These props can be passed to the `ClientOnly` component.
+
+<PropTable component="ClientOnly" part="ClientOnly" />

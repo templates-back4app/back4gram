@@ -1,0 +1,121 @@
+---
+title: Pin Input
+description: Used to capture a pin code or otp from the user
+links:
+  source: components/pin-input
+  storybook: components-pin-input--basic
+  recipe: pin-input
+  ark: https://ark-ui.com/react/docs/components/pin-input
+---
+
+<ExampleTabs name="pin-input-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`pin-input` snippet
+
+```sh
+npx @chakra-ui/cli snippet add pin-input
+```
+
+The snippet includes a closed component composition for the `PinInput`
+component.
+
+## Usage
+
+```jsx
+import { PinInput } from "@/components/ui/pin-input"
+```
+
+```jsx
+<PinInput />
+```
+
+## Examples
+
+### Sizes
+
+Use the `size` prop to change the size of the pin input component.
+
+<ExampleTabs name="pin-input-with-sizes" />
+
+### One time code
+
+Use the `otp` prop to make the pin input component behave like a one-time code
+input. This helps improve the user experience when entering OTP codes.
+
+<ExampleTabs name="pin-input-with-otp" />
+
+### Mask
+
+Use the `mask` prop to obscure the entered pin code.
+
+<ExampleTabs name="pin-input-with-mask" />
+
+### Placeholder
+
+Use the `placeholder` prop to add a placeholder to the pin input component.
+
+<ExampleTabs name="pin-input-with-placeholder" />
+
+### Field
+
+Here's an example of how to compose the `Field` and the `PinInput` components
+
+<ExampleTabs name="pin-input-with-field" />
+
+### Hook Form
+
+Here's an example of how to compose the `Field` and the `PinInput` components
+with `react-hook-form`
+
+<ExampleTabs name="pin-input-with-hook-form" />
+
+### Controlled
+
+Use the `value` and `onValueChange` props to control the value of the pin input
+
+<ExampleTabs name="pin-input-controlled" />
+
+### Store
+
+An alternative way to control the pin input is to use the `RootProvider`
+component and the `usePinInput` store hook.
+
+This way you can access the pin input state and methods from outside the
+component.
+
+<ExampleTabs name="pin-input-with-store" />
+
+### Attached
+
+Use the `attached` prop to attach the pin input to the input field
+
+<ExampleTabs name="pin-input-attached" />
+
+### Alphanumeric
+
+Use the `type` prop to allow the user to enter alphanumeric characters. Values
+can be either `alphanumeric`, `numeric`, or `alphabetic`
+
+<ExampleTabs name="pin-input-alphanumeric" />
+
+### Without Snippet
+
+If you don't want to use the snippet, you can use the `PinInput` component from
+the `@chakra-ui/react` package.
+
+<ExampleTabs name="pin-input-without-snippet" />
+
+### Count
+
+To increase the number of input fields, you can use the `count` prop.
+
+<ExampleTabs name="pin-input-count" />
+
+## Props
+
+### Root
+
+<PropTable component="PinInput" part="Root" />

@@ -1,0 +1,117 @@
+---
+title: Accordion
+description: Used to show and hide sections of related content on a page
+links:
+  source: components/accordion
+  storybook: components-accordion--basic
+  recipe: accordion
+  ark: https://ark-ui.com/react/docs/components/accordion
+---
+
+<ExampleTabs name="accordion-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`accordion` snippet
+
+```sh
+npx @chakra-ui/cli snippet add accordion
+```
+
+The snippet includes a closed component composition for the `Accordion`
+component.
+
+## Usage
+
+```jsx
+import {
+  AccordionItem,
+  AccordionItemContent,
+  AccordionItemTrigger,
+  AccordionRoot,
+} from "@/components/ui/accordion"
+```
+
+```jsx
+<AccordionRoot>
+  <AccordionItem>
+    <AccordionItemTrigger />
+    <AccordionItemContent />
+  </AccordionItem>
+</AccordionRoot>
+```
+
+## Examples
+
+### Controlled
+
+Set the accordion that shows up by default.
+
+<ExampleTabs name="accordion-controlled" />
+
+### With Icon
+
+Use the `AccordionItemIcon` to add an icon to each accordion item.
+
+<ExampleTabs name="accordion-with-icon" />
+
+### Expand Multiple Items
+
+Use the `multiple` prop to allow multiple items to be expanded at once.
+
+<ExampleTabs name="accordion-with-multiple" />
+
+### Sizes
+
+Use the `size` prop to change the size of the accordion.
+
+<ExampleTabs name="accordion-sizes" />
+
+### Variants
+
+Use the `variant` prop to change the visual style of the accordion. Values can
+be either `outline`, `subtle`, `enclosed` or `plain`.
+
+<ExampleTabs name="accordion-variants" />
+
+### Disabled Item
+
+Pass the `disabled` prop to disable an accordion item to prevent it from being
+expanded or collapsed.
+
+<ExampleTabs name="accordion-with-disabled-item" />
+
+### With Avatar
+
+Here's an example of composing an accordion with an avatar.
+
+<ExampleTabs name="accordion-with-avatar" />
+
+### With Subtext
+
+Here's an example of adding a subtext to an accordion item.
+
+<ExampleTabs name="accordion-with-subtext" />
+
+### With Actions
+
+Here's an example of adding actions to an accordion item trigger.
+
+<ExampleTabs name="accordion-with-actions" />
+
+### Without Snippet
+
+Here's how to setup the accordion without using the snippet.
+
+<ExampleTabs name="accordion-without-snippet" />
+
+## Props
+
+### Root
+
+<PropTable component="Accordion" part="Root" />
+
+### Item
+
+<PropTable component="Accordion" part="Item" />

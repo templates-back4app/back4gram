@@ -1,0 +1,84 @@
+---
+title: Hover Card
+description: Used to display content when hovering over an element
+links:
+  source: components/hover-card
+  storybook: components-hover-card--basic
+  recipe: hover-card
+  ark: https://ark-ui.com/react/docs/components/hover-card
+---
+
+<ExampleTabs name="hover-card-basic" />
+
+## Setup
+
+If you don't already have the snippet, run the following command to add the
+`hover-card` snippet
+
+```sh
+npx @chakra-ui/cli snippet add hover-card
+```
+
+The snippet includes component compositions based on the `HoverCard` component.
+
+## Usage
+
+```jsx
+import {
+  HoverCardArrow,
+  HoverCardContent,
+  HoverCardRoot,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+```
+
+```jsx
+<HoverCardRoot>
+  <HoverCardTrigger />
+  <HoverCardContent>
+    <HoverCardArrow />
+  </HoverCardContent>
+</HoverCardRoot>
+```
+
+## Examples
+
+### Controlled
+
+Use the `open` and `onOpenChange` to control the visibility of the hover card.
+
+<ExampleTabs name="hover-card-controlled" />
+
+### Delays
+
+Control the open and close delays using the `openDelay` and `closeDelay` props.
+
+<ExampleTabs name="hover-card-with-delay" />
+
+### Placement
+
+Use the `positioning.placement` prop to configure the underlying `floating-ui`
+positioning logic.
+
+<ExampleTabs name="hover-card-with-placement" />
+
+### Within Dialog
+
+Here's an example of how to use the `HoverCard` within a `Dialog` component.
+
+> Due to the focus trap within the dialog, it's important to change the portal
+> target from the document's body to the dialog's content.
+
+<ExampleTabs name="hover-card-in-dialog" />
+
+## Accessibility
+
+HoverCard should be used solely for supplementary information that is not
+essential for understanding the context.
+
+It is inaccessible to screen readers and cannot be activated via keyboard, so
+avoid placing crucial content within it.
+
+## Props
+
+<PropTable component="HoverCard" part="Root" />
