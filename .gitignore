@@ -10,6 +10,7 @@
 
 # production
 /build
+/chakra-docs
 
 # misc
 .DS_Store
