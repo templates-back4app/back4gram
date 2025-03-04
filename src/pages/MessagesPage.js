@@ -450,8 +450,9 @@ function MessagesPage() {
       newMessage.set('sender', currentUser);
       newMessage.set('text', messageText);
       
-      // Save the message but don't add it to UI - let Live Query handle it
+      // Save the message
       const savedMessage = await newMessage.save();
+      console.log('Message saved:', savedMessage.id);
       
       // Add the message ID to the set of processed IDs to prevent duplication
       // when it comes back through Live Query
@@ -460,6 +461,30 @@ function MessagesPage() {
         newIds.add(savedMessage.id);
         return newIds;
       });
+      
+      // Check if this is a new conversation (no messages yet)
+      // If it is, add the message to the UI immediately
+      if (messages.length === 0) {
+        console.log('First message in conversation, adding to UI immediately');
+        const formattedMessage = {
+          id: savedMessage.id,
+          text: messageText,
+          sender: {
+            id: currentUser.id,
+            username: currentUser.get('username')
+          },
+          createdAt: new Date()
+        };
+        
+        setMessages([formattedMessage]);
+        
+        // Scroll to bottom of messages
+        setTimeout(() => {
+          if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 100);
+      }
       
       // Update conversation's lastMessage
       const conversationObj = await new Parse.Query('Conversation').get(activeConversation.id);
@@ -578,7 +603,9 @@ function MessagesPage() {
         
         // Set as active conversation
         setActiveConversation(conversation);
-        fetchMessages(conversation.id);
+        
+        // Fetch messages and set up Live Query
+        await fetchMessages(conversation.id);
       } else {
         console.log('Creating new conversation with user:', userId);
         
@@ -613,9 +640,15 @@ function MessagesPage() {
         // Add to conversations list
         setConversations(prev => [conversation, ...prev]);
         
-        // Set as active conversation
+        // Set as active conversation and reset message state
         setActiveConversation(conversation);
-        setMessages([]);
+        resetMessageState();
+        
+        // Set up Live Query for the new conversation
+        await setupLiveQuery(savedConv.id);
+        
+        // Set up typing status subscription
+        await setupTypingStatusSubscription(savedConv.id);
         
         // Reset search
         setShowUserSearch(false);
