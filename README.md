@@ -1,70 +1,137 @@
-# Getting Started with Create React App
+# Social Network Starter Kit
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, feature-rich social network application built with React and Parse Server (Back4App). This project provides a complete foundation for building your own social networking platform.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+### User Management
+- **Authentication**: Sign up, login, and password reset functionality
+- **User Profiles**: Customizable profiles with avatars and bio information
+- **Follow System**: Follow/unfollow other users
 
-### `npm start`
+### Content
+- **Feed**: Personalized feed showing posts from followed users
+- **Posts**: Create text posts with optional image attachments
+- **Comments**: Comment on posts
+- **Likes**: Like posts and comments
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Messaging
+- **Real-time Chat**: Direct messaging between users
+- **Conversation Management**: Start new conversations and view message history
+- **Typing Indicators**: See when someone is typing
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Search
+- **User Search**: Find other users by username
+- **Content Search**: Search for posts by content
 
-### `npm test`
+## Database Schema
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### User
+- `username`: String (unique)
+- `email`: String (unique)
+- `password`: String (encrypted)
+- `avatar`: File (optional)
+- `bio`: String (optional)
+- `followers`: Relation to User
+- `following`: Relation to User
 
-### `npm run build`
+### Post
+- `author`: Pointer to User
+- `content`: String
+- `image`: File (optional)
+- `likes`: Number
+- `createdAt`: Date
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Comment
+- `post`: Pointer to Post
+- `author`: Pointer to User
+- `content`: String
+- `createdAt`: Date
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Conversation
+- `participants`: Array of Pointers to User
+- `lastMessage`: String
+- `updatedAt`: Date
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Message
+- `conversation`: Pointer to Conversation
+- `sender`: Pointer to User
+- `text`: String
+- `createdAt`: Date
 
-### `npm run eject`
+## Back4App Setup
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prerequisites
+- A Back4App account (https://back4app.com)
+- Node.js and npm installed
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Setting Up Your Back4App App
+1. Create a new app on Back4App
+2. Navigate to "Server Settings" > "Parse Server"
+3. Note your Application ID and JavaScript Key
+4. Enable Live Query for the Message class to support real-time chat
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Database Configuration
+1. In Back4App, go to "Dashboard" > "Database Browser"
+2. Create the following classes with the schema described above:
+   - User (already exists by default)
+   - Post
+   - Comment
+   - Conversation
+   - Message
+3. Set up appropriate ACLs for each class
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Getting Started
 
-## Learn More
+### Installation
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/social-network-starter.git
+   cd social-network-starter
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. Create a `.env.local` file in the root directory with your Back4App credentials:
+   ```
+   REACT_APP_PARSE_APPLICATION_ID=your_application_id
+   REACT_APP_PARSE_JAVASCRIPT_KEY=your_javascript_key
+   REACT_APP_PARSE_SERVER_URL=https://parseapi.back4app.com
+   REACT_APP_PARSE_LIVE_QUERY_URL=wss://your-app-id.back4app.io
+   ```
 
-### Code Splitting
+### Running the Application
+1. Start the development server:
+   ```
+   npm start
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+2. Open your browser and navigate to `http://localhost:3000`
 
-### Analyzing the Bundle Size
+## Deployment
+1. Build the production version:
+   ```
+   npm run build
+   ```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. Deploy the contents of the `build` folder to your hosting provider of choice (Netlify, Vercel, GitHub Pages, etc.)
 
-### Making a Progressive Web App
+## Customization
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Styling
+The project uses Chakra UI for styling. You can customize the theme in `src/theme.js`.
 
-### Advanced Configuration
+### Adding Features
+The modular structure makes it easy to add new features:
+1. Create new components in the `components` directory
+2. Add new pages in the `pages` directory
+3. Update routes in `App.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
