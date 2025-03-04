@@ -8,9 +8,9 @@ import {
   VStack,
   Link,
   Field,
-  InputGroup,
-  InputRightElement,
-  IconButton
+  Text,
+  IconButton,
+  Flex
 } from '@chakra-ui/react';
 import Parse from 'parse/dist/parse.min.js';
 import { toaster } from '../components/ui/toaster';
@@ -124,21 +124,26 @@ function SignupPage() {
             
             <Field.Root invalid={!!errors.password}>
               <Field.Label>Password</Field.Label>
-              <InputGroup>
+              <Flex position="relative">
                 <Input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  pr="2.5rem"
+                  width="100%"
                 />
-                <InputRightElement>
-                  <IconButton
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    icon={showPassword ? '👁️' : '👁️‍🗨️'}
-                    variant="ghost"
-                    onClick={() => setShowPassword(!showPassword)}
-                  />
-                </InputRightElement>
-              </InputGroup>
+                <IconButton
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  icon={showPassword ? '👁️' : '👁️‍🗨️'}
+                  variant="ghost"
+                  size="sm"
+                  position="absolute"
+                  right="0.25rem"
+                  top="50%"
+                  transform="translateY(-50%)"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
+              </Flex>
               {errors.password && (
                 <Field.ErrorText>{errors.password}</Field.ErrorText>
               )}

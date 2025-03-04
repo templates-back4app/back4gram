@@ -30,29 +30,27 @@ function MessagesPage() {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showUserSearch, setShowUserSearch] = useState(false);
-  const processedMessageIdsRef = useRef(new Set());
+  const [processedMessageIds, setProcessedMessageIds] = useState(new Set());
+  const [otherUserTyping, setOtherUserTyping] = useState(false);
   
   const messagesEndRef = useRef(null);
   const liveQuerySubscription = useRef(null);
+  const typingStatusSubscription = useRef(null);
   const navigate = useNavigate();
+  const typingTimerRef = useRef(null);
 
   // Check if user is authenticated
   useEffect(() => {
-    // Clear all state when component mounts
-    setConversations([]);
-    setActiveConversation(null);
-    setMessages([]);
-    setUsers([]);
-    setSearchQuery('');
-    setShowUserSearch(false);
-    
     const checkAuth = async () => {
       try {
+        console.log('Checking authentication...');
         const user = await Parse.User.current();
         if (!user) {
+          console.log('No user found, redirecting to login');
           navigate('/login');
           return;
         }
+        console.log('User authenticated:', user.id, user.get('username'));
         setCurrentUser(user);
         fetchConversations(user);
       } catch (error) {
@@ -63,10 +61,16 @@ function MessagesPage() {
     
     checkAuth();
     
-    // Clean up subscription when component unmounts
+    // Clean up subscriptions and timer when component unmounts
     return () => {
       if (liveQuerySubscription.current) {
         liveQuerySubscription.current.unsubscribe();
+      }
+      if (typingStatusSubscription.current) {
+        typingStatusSubscription.current.unsubscribe();
+      }
+      if (typingTimerRef.current) {
+        clearTimeout(typingTimerRef.current);
       }
     };
   }, [navigate]);
@@ -75,6 +79,8 @@ function MessagesPage() {
   const fetchConversations = async (user) => {
     setIsLoading(true);
     try {
+      console.log('Fetching conversations for user:', user.id);
+      
       // Query conversations where the current user is a participant
       const query = new Parse.Query('Conversation');
       query.equalTo('participants', user);
@@ -82,12 +88,18 @@ function MessagesPage() {
       query.descending('updatedAt');
       
       const results = await query.find();
+      console.log('Found conversations:', results.length);
       
       // Format conversations
       const formattedConversations = results.map(conv => {
         const participants = conv.get('participants');
         // Find the other participant (not the current user)
         const otherParticipant = participants.find(p => p.id !== user.id);
+        
+        if (!otherParticipant) {
+          console.warn('Could not find other participant in conversation:', conv.id);
+          return null;
+        }
         
         return {
           id: conv.id,
@@ -99,8 +111,9 @@ function MessagesPage() {
           lastMessage: conv.get('lastMessage') || '',
           updatedAt: conv.get('updatedAt')
         };
-      });
+      }).filter(Boolean); // Remove any null entries
       
+      console.log('Formatted conversations:', formattedConversations);
       setConversations(formattedConversations);
       
       // If there are conversations, set the first one as active
@@ -120,12 +133,32 @@ function MessagesPage() {
     }
   };
 
-  // Fetch messages for a conversation
+  // Melhorar a função resetMessageState
+  const resetMessageState = () => {
+    console.log('Resetting message state');
+    setMessages([]);
+    setProcessedMessageIds(new Set());
+    setOtherUserTyping(false);
+    
+    if (liveQuerySubscription.current) {
+      liveQuerySubscription.current.unsubscribe();
+      liveQuerySubscription.current = null;
+      console.log('Unsubscribed from Live Query in resetMessageState');
+    }
+    
+    if (typingStatusSubscription.current) {
+      typingStatusSubscription.current.unsubscribe();
+      typingStatusSubscription.current = null;
+      console.log('Unsubscribed from typing status subscription in resetMessageState');
+    }
+  };
+
+  // Update the fetchMessages function to reset state first
   const fetchMessages = async (conversationId) => {
+    // Reset message state to avoid any lingering messages or subscriptions
+    resetMessageState();
+    
     try {
-      // Clear the processed message IDs when fetching new messages
-      processedMessageIdsRef.current = new Set();
-      
       // Query messages for this conversation
       const query = new Parse.Query('Message');
       const conversation = new Parse.Object('Conversation');
@@ -148,15 +181,18 @@ function MessagesPage() {
         createdAt: msg.get('createdAt')
       }));
       
-      // Add all message IDs to the processed set
-      formattedMessages.forEach(msg => {
-        processedMessageIdsRef.current.add(msg.id);
-      });
+      // Initialize the set of processed message IDs
+      const messageIds = new Set(formattedMessages.map(msg => msg.id));
       
+      // Set state after processing all messages
       setMessages(formattedMessages);
+      setProcessedMessageIds(messageIds);
       
       // Set up Live Query subscription for new messages
       setupLiveQuery(conversationId);
+      
+      // Set up typing status subscription
+      setupTypingStatusSubscription(conversationId);
       
       // Scroll to bottom of messages
       setTimeout(() => {
@@ -211,13 +247,10 @@ function MessagesPage() {
         console.log('New message received via Live Query:', message.id);
         
         // Check if we've already processed this message
-        if (processedMessageIdsRef.current.has(message.id)) {
+        if (processedMessageIds.has(message.id)) {
           console.log('Skipping duplicate message:', message.id);
           return;
         }
-        
-        // Add the message ID to the processed set
-        processedMessageIdsRef.current.add(message.id);
         
         // Format the new message
         const newMessage = {
@@ -232,8 +265,22 @@ function MessagesPage() {
         
         console.log('Formatted new message:', newMessage);
         
+        // Add the message ID to the set of processed IDs
+        setProcessedMessageIds(prevIds => {
+          const newIds = new Set(prevIds);
+          newIds.add(message.id);
+          return newIds;
+        });
+        
         // Add the new message to the messages state
-        setMessages(prevMessages => [...prevMessages, newMessage]);
+        setMessages(prevMessages => {
+          // Check if the message is already in the list (additional duplicate check)
+          if (prevMessages.some(msg => msg.id === message.id)) {
+            console.log('Message already in list, not adding again:', message.id);
+            return prevMessages;
+          }
+          return [...prevMessages, newMessage];
+        });
         
         // Use the captured user to avoid null reference
         if (capturedUser && message.get('sender').id !== capturedUser.id) {
@@ -293,21 +340,104 @@ function MessagesPage() {
     }
   };
 
+  // Função para configurar a assinatura do status de digitação
+  const setupTypingStatusSubscription = async (conversationId) => {
+    // Cancelar assinatura anterior, se existir
+    if (typingStatusSubscription.current) {
+      typingStatusSubscription.current.unsubscribe();
+      console.log('Unsubscribed from previous typing status subscription');
+    }
+    
+    try {
+      console.log('Setting up typing status subscription for conversation:', conversationId);
+      
+      // Criar uma consulta para a classe TypingStatus
+      const query = new Parse.Query('TypingStatus');
+      const conversation = new Parse.Object('Conversation');
+      conversation.id = conversationId;
+      
+      // Filtrar por conversa
+      query.equalTo('conversation', conversation);
+      
+      // Não incluir o status do usuário atual
+      query.notEqualTo('user', currentUser);
+      
+      // Assinar à consulta
+      typingStatusSubscription.current = await query.subscribe();
+      console.log('Successfully subscribed to typing status');
+      
+      // Manipular eventos de criação
+      typingStatusSubscription.current.on('create', (status) => {
+        console.log('Typing status created:', status.get('isTyping'));
+        setOtherUserTyping(status.get('isTyping'));
+      });
+      
+      // Manipular eventos de atualização
+      typingStatusSubscription.current.on('update', (status) => {
+        console.log('Typing status updated:', status.get('isTyping'));
+        setOtherUserTyping(status.get('isTyping'));
+      });
+      
+      // Manipular erros
+      typingStatusSubscription.current.on('error', (error) => {
+        console.error('Typing status subscription error:', error);
+      });
+    } catch (error) {
+      console.error('Error setting up typing status subscription:', error);
+    }
+  };
+
+  // Função para atualizar o status de digitação
+  const updateTypingStatus = async (isTyping) => {
+    if (!activeConversation || !currentUser) return;
+    
+    try {
+      // Verificar se já existe um status de digitação para este usuário e conversa
+      const query = new Parse.Query('TypingStatus');
+      const conversation = new Parse.Object('Conversation');
+      conversation.id = activeConversation.id;
+      
+      query.equalTo('user', currentUser);
+      query.equalTo('conversation', conversation);
+      
+      const existingStatus = await query.first();
+      
+      if (existingStatus) {
+        // Atualizar o status existente
+        existingStatus.set('isTyping', isTyping);
+        await existingStatus.save();
+      } else {
+        // Criar um novo status
+        const TypingStatus = Parse.Object.extend('TypingStatus');
+        const newStatus = new TypingStatus();
+        
+        newStatus.set('user', currentUser);
+        newStatus.set('conversation', conversation);
+        newStatus.set('isTyping', isTyping);
+        
+        await newStatus.save();
+      }
+    } catch (error) {
+      console.error('Error updating typing status:', error);
+    }
+  };
+
   // Send a message
   const sendMessage = async () => {
     if (!message.trim() || !activeConversation) return;
     
+    const messageText = message.trim(); // Store the message text
     setIsSending(true);
-    const messageText = message; // Store the message text
-    setMessage(''); // Clear input immediately for better UX
+    setMessage(''); // Clear input immediately to prevent double-sending
+    setIsTyping(false); // Clear typing status locally
+    updateTypingStatus(false); // Clear typing status on server
+    
+    // Clear typing timer
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current);
+    }
     
     try {
-      // Get the current user again to ensure we have the latest reference
-      const currentUserObj = Parse.User.current();
-      if (!currentUserObj) {
-        throw new Error('You are not logged in');
-      }
-      
       // Create message
       const Message = Parse.Object.extend('Message');
       const newMessage = new Message();
@@ -317,26 +447,19 @@ function MessagesPage() {
       conversation.id = activeConversation.id;
       
       newMessage.set('conversation', conversation);
-      newMessage.set('sender', currentUserObj);
+      newMessage.set('sender', currentUser);
       newMessage.set('text', messageText);
       
+      // Save the message but don't add it to UI - let Live Query handle it
       const savedMessage = await newMessage.save();
       
-      // Add the message ID to the processed set
-      processedMessageIdsRef.current.add(savedMessage.id);
-      
-      // Add the message to the UI immediately for the sender
-      const formattedMessage = {
-        id: savedMessage.id,
-        text: messageText,
-        sender: {
-          id: currentUserObj.id,
-          username: currentUserObj.get('username')
-        },
-        createdAt: new Date()
-      };
-      
-      setMessages(prevMessages => [...prevMessages, formattedMessage]);
+      // Add the message ID to the set of processed IDs to prevent duplication
+      // when it comes back through Live Query
+      setProcessedMessageIds(prevIds => {
+        const newIds = new Set(prevIds);
+        newIds.add(savedMessage.id);
+        return newIds;
+      });
       
       // Update conversation's lastMessage
       const conversationObj = await new Parse.Query('Conversation').get(activeConversation.id);
@@ -357,17 +480,11 @@ function MessagesPage() {
         });
       });
       
-      // Scroll to bottom of messages
-      setTimeout(() => {
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
     } catch (error) {
       console.error('Error sending message:', error);
       toaster.create({
         title: 'Error',
-        description: 'Failed to send message: ' + error.message,
+        description: 'Failed to send message',
         type: 'error',
       });
       // If there's an error, put the message back in the input
@@ -391,7 +508,7 @@ function MessagesPage() {
       const userQuery = new Parse.Query(Parse.User);
       
       // Search for username containing the query string (case insensitive)
-      userQuery.contains('username', query);
+      userQuery.contains('username', query.toLowerCase());
       
       // Don't include the current user in results
       userQuery.notEqualTo('objectId', currentUser.id);
@@ -401,6 +518,7 @@ function MessagesPage() {
       
       // Execute the query
       const results = await userQuery.find();
+      console.log('User search results:', results.length);
       
       // Format users
       const formattedUsers = results.map(user => ({
@@ -409,7 +527,7 @@ function MessagesPage() {
         avatar: user.get('avatar') ? user.get('avatar').url() : null
       }));
       
-      console.log('Search results:', formattedUsers);
+      console.log('Formatted users:', formattedUsers);
       setUsers(formattedUsers);
     } catch (error) {
       console.error('Error searching users:', error);
@@ -428,55 +546,52 @@ function MessagesPage() {
     try {
       // Check if a conversation already exists with this user
       const query = new Parse.Query('Conversation');
-      const otherUser = new Parse.User();
-      otherUser.id = userId;
       
-      query.equalTo('participants', currentUser);
-      query.equalTo('participants', otherUser);
+      // Create pointers to both users
+      const currentUserPointer = Parse.User.current();
+      const otherUserPointer = new Parse.User();
+      otherUserPointer.id = userId;
+      
+      // Find conversations where both users are participants
+      query.containsAll('participants', [currentUserPointer, otherUserPointer]);
       
       const existingConv = await query.first();
       
       if (existingConv) {
         console.log('Found existing conversation:', existingConv.id);
         
-        // Conversation exists, set it as active
-        const participants = existingConv.get('participants') || [];
-        const otherParticipant = participants.find(p => p && p.id !== currentUser.id);
+        // Get the other user object
+        const userQuery = new Parse.Query(Parse.User);
+        const otherUser = await userQuery.get(userId);
         
-        if (!otherParticipant) {
-          throw new Error('Could not find the other participant in the conversation');
-        }
-        
+        // Format the conversation
         const conversation = {
           id: existingConv.id,
           user: {
-            id: otherParticipant.id,
-            username: otherParticipant.get('username') || 'Unknown User',
-            avatar: otherParticipant.get('avatar') ? otherParticipant.get('avatar').url() : null
+            id: otherUser.id,
+            username: otherUser.get('username'),
+            avatar: otherUser.get('avatar') ? otherUser.get('avatar').url() : null
           },
           lastMessage: existingConv.get('lastMessage') || '',
           updatedAt: existingConv.get('updatedAt')
         };
         
+        // Set as active conversation
         setActiveConversation(conversation);
         fetchMessages(conversation.id);
       } else {
         console.log('Creating new conversation with user:', userId);
         
+        // Get the other user object
+        const userQuery = new Parse.Query(Parse.User);
+        const otherUser = await userQuery.get(userId);
+        
         // Create a new conversation
         const Conversation = Parse.Object.extend('Conversation');
         const newConversation = new Conversation();
         
-        // Get the other user object
-        const userQuery = new Parse.Query(Parse.User);
-        const otherUserObj = await userQuery.get(userId);
-        
-        if (!otherUserObj) {
-          throw new Error('Could not find the user');
-        }
-        
         // Set participants
-        newConversation.set('participants', [currentUser, otherUserObj]);
+        newConversation.set('participants', [currentUserPointer, otherUserPointer]);
         newConversation.set('lastMessage', '');
         
         // Save the conversation
@@ -487,9 +602,9 @@ function MessagesPage() {
         const conversation = {
           id: savedConv.id,
           user: {
-            id: otherUserObj.id,
-            username: otherUserObj.get('username') || 'Unknown User',
-            avatar: otherUserObj.get('avatar') ? otherUserObj.get('avatar').url() : null
+            id: otherUser.id,
+            username: otherUser.get('username'),
+            avatar: otherUser.get('avatar') ? otherUser.get('avatar').url() : null
           },
           lastMessage: '',
           updatedAt: savedConv.get('updatedAt')
@@ -511,7 +626,7 @@ function MessagesPage() {
       console.error('Error starting conversation:', error);
       toaster.create({
         title: 'Error',
-        description: 'Failed to start conversation: ' + error.message,
+        description: 'Failed to start conversation',
         type: 'error',
       });
     }
@@ -609,8 +724,13 @@ function MessagesPage() {
             placeholder="Search users..." 
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              searchUsers(e.target.value);
+              const value = e.target.value;
+              setSearchQuery(value);
+              if (value.trim().length > 0) {
+                searchUsers(value);
+              } else {
+                setUsers([]);
+              }
             }}
             mr={2}
           />
@@ -646,8 +766,8 @@ function MessagesPage() {
                 >
                   <HStack>
                     <Avatar.Root size="sm">
-                      <Avatar.Fallback>{user.username ? user.username[0] : '?'}</Avatar.Fallback>
-                      <Avatar.Image src={user.avatar} alt={user.username || 'User'} />
+                      <Avatar.Fallback>{user.username[0]}</Avatar.Fallback>
+                      <Avatar.Image src={user.avatar} alt={user.username} />
                     </Avatar.Root>
                     <Text>{user.username}</Text>
                   </HStack>
@@ -672,14 +792,16 @@ function MessagesPage() {
                   _hover={{ bg: 'gray.700' }}
                   cursor="pointer"
                   onClick={() => {
-                    setActiveConversation(conv);
-                    fetchMessages(conv.id);
+                    if (activeConversation?.id !== conv.id) {
+                      setActiveConversation(conv);
+                      fetchMessages(conv.id);
+                    }
                   }}
                 >
                   <HStack>
                     <Avatar.Root size="sm">
-                      <Avatar.Fallback>{conv.user.username ? conv.user.username[0] : '?'}</Avatar.Fallback>
-                      <Avatar.Image src={conv.user.avatar} alt={conv.user.username || 'User'} />
+                      <Avatar.Fallback>{conv.user.username[0]}</Avatar.Fallback>
+                      <Avatar.Image src={conv.user.avatar} alt={conv.user.username} />
                     </Avatar.Root>
                     <Box flex="1" overflow="hidden">
                       <Flex justify="space-between" align="center">
@@ -711,11 +833,11 @@ function MessagesPage() {
         {/* Chat Header */}
             <Flex align="center" p={4} borderBottomWidth="1px" borderColor="gray.700">
           <Avatar.Root size="sm" mr={2}>
-                <Avatar.Fallback>{activeConversation.user.username ? activeConversation.user.username[0] : '?'}</Avatar.Fallback>
-                <Avatar.Image src={activeConversation.user.avatar} alt={activeConversation.user.username || 'User'} />
+                <Avatar.Fallback>{activeConversation.user.username[0]}</Avatar.Fallback>
+                <Avatar.Image src={activeConversation.user.avatar} alt={activeConversation.user.username} />
           </Avatar.Root>
               <Text fontWeight="bold">{activeConversation.user.username}</Text>
-          {isTyping && (
+          {otherUserTyping && (
                 <Text ml={2} color="gray.400" fontSize="sm">
               is typing...
             </Text>
@@ -765,24 +887,46 @@ function MessagesPage() {
             value={message}
             onChange={(e) => {
               setMessage(e.target.value);
-              setIsTyping(e.target.value.length > 0);
+              
+              // Set typing status to true locally
+              setIsTyping(true);
+              
+              // Update typing status on server
+              updateTypingStatus(true);
+              
+              // Clear any existing timer
+              if (typingTimerRef.current) {
+                clearTimeout(typingTimerRef.current);
+              }
+              
+              // Set a new timer to turn off typing status after 2 seconds of inactivity
+              typingTimerRef.current = setTimeout(() => {
+                setIsTyping(false);
+                updateTypingStatus(false);
+              }, 2000);
             }}
-                mr={2}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                  }
-                }}
-              />
-              <Button 
-                colorScheme="blue" 
-                onClick={sendMessage}
-                isLoading={isSending}
-                disabled={!message.trim() || isSending}
-              >
-                Send
-              </Button>
+            mr={2}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+                // Also clear typing status when sending a message
+                setIsTyping(false);
+                updateTypingStatus(false);
+                if (typingTimerRef.current) {
+                  clearTimeout(typingTimerRef.current);
+                }
+              }
+            }}
+          />
+          <Button 
+            colorScheme="blue" 
+            onClick={sendMessage}
+            isLoading={isSending}
+            disabled={!message.trim() || isSending}
+          >
+            Send
+          </Button>
         </Flex>
           </>
         ) : (
