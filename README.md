@@ -1,4 +1,4 @@
-# Social Network Starter Kit
+# 1Social Network Starter Kit
 
 A modern, feature-rich social network application built with React and Parse Server (Back4App). This project provides a complete foundation for building your own social networking platform.
 
