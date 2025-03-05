@@ -2,6 +2,17 @@
 
 A modern, feature-rich social network application built with React and Parse Server (Back4App). This project provides a complete foundation for building your own social networking platform.
 
+![image](https://github.com/user-attachments/assets/49feea6f-70c4-4af5-a226-70a405a6fead)
+![image](https://github.com/user-attachments/assets/d6e8de0e-48a8-41b6-ba63-fa3c796b1fd8)
+![image](https://github.com/user-attachments/assets/c73c96e6-98c9-4c81-828e-58d4c444246b)
+<img width="1511" alt="image" src="https://github.com/user-attachments/assets/958c86fb-a7e0-4ded-b2ed-0aaaeb5398de" />
+![image](https://github.com/user-attachments/assets/a8ca31ab-a8a8-4991-80e3-7c8f163ae61a)
+
+
+
+
+
+
 ## Features
 
 ### User Management
